@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-# Copyright (C) 2012  Alexander Berntsen <alexander@plaimi.net>
+# Copyright (C) 2012, 2013  Alexander Berntsen <alexander@plaimi.net>
+# Copyright (C) 2012, 2013  Stian Ellingsen <stian@plaimi.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
