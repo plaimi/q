@@ -19,6 +19,28 @@ or:
 	$ python q
 
 
+Dependencies
+============
+
+quizbot is written in Python and runs on the 2.7 interpreter. The dependencies 
+below are listed with the oldest versions that are confirmed to work. Older 
+versions *might* work. If they do, please report it to <alexander@plaimi.net>, 
+so that he can update this file.
+
+-python 2.7.x
+-twisted >= 11.0.0
+-twisted-words >= 11.0.0
+
+A Note on Python 3
+------------------
+
+The 3.x interpreter will try to run this and fail. You *need* to use a 2.x 
+interpreter (2.7.x is the only one with which quizbot is formally tested). 
+This may be accomplished by specifically invoking a 2.x interpreter on some 
+systems.
+        $ python2 q
+
+
 quizbot in #quiznode on Freenode
 ================================
 
