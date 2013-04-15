@@ -154,6 +154,8 @@ class Bot(irc.IRCClient):
         self.answer = cqa[2]
         self.msg(self.factory.channel, 'TOPIC: %s - Q: %s' %
                 (self.category, self.question))
+        if config.verbose:
+            print '%s - %s - %s' % (self.category, self.question, self.answer)
         # Make list of hidden parts of the answer.
         self.answer_masks = range(len(str(self.answer)))
         # Set how many characters are revealed per hint.

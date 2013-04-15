@@ -6,3 +6,4 @@ username = nickname
 password = False
 masters = [nickname, 'my_nickname']
 hiscoresdb = 'hiscores.sql'
+verbose = True
