@@ -124,14 +124,14 @@ class Bot(irc.IRCClient):
 
     def decide(self):
         """Figure out whether to post a question or a hint."""
-        dt = self.last_decide - self.answered
-        if self.answered:
-            self.ask()
-            reactor.callLater(max(0, 10 + dt), self.decide)
-        else:
-            self.hint()
-            reactor.callLater(10, self.decide)
-        self.last_decide = time()
+        t = time()
+        f, dt = ((self.ask, self.answered + 5 - t) if self.answered else
+                 (self.hint, self.last_decide + 10 - t))
+        if dt < 0.5:
+            f()
+            self.last_decide = t
+            dt = 5
+        reactor.callLater(min(5, dt), self.decide)
 
     def ask(self):
         """Ask a question."""
