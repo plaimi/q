@@ -229,6 +229,8 @@ class Bot(irc.IRCClient):
         for numAnswerers, (quizzer, points) in enumerate(quizzersByPoints):
             if points < 1:
                 break
+        else:
+            numAnswerers += 1
         if numAnswerers > 1:
             winner = quizzersByPoints[0][0]
             self.dbcur.execute('SELECT * FROM hiscore WHERE quizzer=?',
