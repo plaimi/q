@@ -19,6 +19,7 @@
 """Simple quizbot that asks questions and awards points."""
 
 import config
+import sqlite3
 
 from getpass import getpass
 from operator import itemgetter
@@ -53,6 +54,11 @@ class Bot(irc.IRCClient):
         self.winner = ''
         self.question = ''
         self.recently_asked = []
+        self.db = sqlite3.connect(config.hiscoresdb)
+        self.dbcur = self.db.cursor()
+        self.dbcur.execute('CREATE TABLE IF NOT EXISTS hiscore (quizzer TEXT'
+                           ' unique, wins INTEGER)')
+        self.db.commit()
         irc.IRCClient.connectionMade(self)
 
     def signedOn(self):
@@ -204,6 +210,26 @@ class Bot(irc.IRCClient):
 
     def win(self, winner):
         """Is called when target score is reached."""
+        numAnswerers = 0
+        quizzersByPoints = sorted(self.quizzers.iteritems(), key=itemgetter(1),
+                                  reverse=True)
+        for numAnswerers, (quizzer, points) in enumerate(quizzersByPoints):
+            if points < 1:
+                break
+        if numAnswerers > 1:
+            winner = quizzersByPoints[0][0]
+            self.dbcur.execute('SELECT * FROM hiscore WHERE quizzer=?',
+                               (winner,))
+            wins = 1
+            row = self.dbcur.fetchone()
+            if row is not None:
+                wins = row[1] + 1
+                sql = 'UPDATE hiscore SET wins = ? WHERE quizzer = ?'
+            else:
+                sql = 'INSERT INTO hiscore (wins,quizzer) VALUES (?,?)'
+            self.dbcur.execute(sql, (wins, winner))
+            self.db.commit()
+
         self.winner = winner
         self.msg(self.factory.channel,
                  'congratulations to %s, you\'re winner!!!' % self.winner)
@@ -257,10 +283,16 @@ class Bot(irc.IRCClient):
                 prev_points = points
 
     def set_topic(self):
+        self.dbcur.execute('SELECT * FROM hiscore ORDER by wins DESC LIMIT 1')
+        alltime = self.dbcur.fetchone()
+        if alltime is None:
+            alltime = ["no one", 0]
         self.topic(
             self.factory.channel,
-            'happy quizzing. :-> target score: %d. previous winner: %s' %
-            (self.target_score, self.winner))
+            'happy quizzing. :-> target score: %d. previous winner: %s. '
+            'all-time winner: %s (%d).' %
+            (self.target_score, self.winner, alltime[0].encode('UTF-8'),
+             alltime[1]))
 
     def reset(self):
         """Set all quizzers' points to 0 and change topic."""
