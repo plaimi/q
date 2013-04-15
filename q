@@ -130,6 +130,8 @@ class Bot(irc.IRCClient):
             self.deop(name)
         elif msg.startswith('!score'):
             self.print_score()
+        elif msg.startswith('!hiscore'):
+            self.print_hiscore()
         # Unknown command.
         elif msg[0] == '!':
             self.msg(self.factory.channel if channel != self.nickname else
@@ -301,6 +303,14 @@ class Bot(irc.IRCClient):
                 self.msg(self.factory.channel, '%d. %s: %d points' %
                          (j, quizzer, points))
                 prev_points = points
+
+    def print_hiscore(self):
+        """Print the top five quizzers of all time."""
+        self.dbcur.execute('SELECT * FROM hiscore ORDER by wins DESC LIMIT 5')
+        hiscore = self.dbcur.fetchall()
+        for i, (quizzer, wins) in enumerate(hiscore):
+            self.msg(self.factory.channel, '%d. %s: %d points' %
+                    (i + 1, quizzer.encode('UTF-8'), wins))
 
     def set_topic(self):
         self.dbcur.execute('SELECT * FROM hiscore ORDER by wins DESC LIMIT 1')
