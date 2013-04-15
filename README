@@ -67,7 +67,6 @@ Yes, please. Follow PEP-8: <http://www.python.org/dev/peps/pep-0008/>.
 - Make quizbot reconnect correctly when it loses its IRC connection.
 - Improve ugly parts of the code (there's plenty to choose from).
 - Improve commenting by to be more clear and/or informative.
-- Write a hunger system for the bot. I am dead serious.
 
 Try to keep the source very short. Please take some time to come up with the
 shortest readable and logical solution to what you are trying to do. When you
