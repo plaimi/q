@@ -59,6 +59,8 @@ class Bot(irc.IRCClient):
         self.dbcur.execute('CREATE TABLE IF NOT EXISTS hiscore (quizzer TEXT'
                            ' unique, wins INTEGER)')
         self.db.commit()
+        self.hunger = 0
+        self.complained = False
         irc.IRCClient.connectionMade(self)
 
     def signedOn(self):
@@ -79,6 +81,7 @@ class Bot(irc.IRCClient):
         """Overrides USERJOINED."""
         name = self.clean_nick(user)
         self.add_quizzer(name)
+        self.complained = False
 
     def userLeft(self, user, channel):
         """Overrides USERLEFT."""
@@ -142,6 +145,13 @@ class Bot(irc.IRCClient):
 
     def ask(self):
         """Ask a question."""
+        self.hunger += 1
+        if self.hunger > 6:
+            if not self.complained:
+                self.msg(self.factory.channel,
+                         "I'm hungry. Please feed me with !botsnack.")
+                self.complained = True
+            return
         # Make sure there have been ten questions in between this question.
         while self.question in self.recently_asked or not self.question:
             cqa = choice(q.questions)
@@ -208,6 +218,7 @@ class Bot(irc.IRCClient):
                 (self.answer, awardee))
         if self.quizzers[awardee] == self.target_score:
             self.win(awardee)
+        self.hunger = max(0, self.hunger - 1)
         self.answered = time()
 
     def win(self, winner):
@@ -259,6 +270,8 @@ class Bot(irc.IRCClient):
 
     def feed(self):
         """Feed quizbot."""
+        self.hunger = 0
+        self.complained = False
         self.msg(self.factory.channel, 'ta. :-)')
 
     def op(self, user):
