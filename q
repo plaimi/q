@@ -298,7 +298,7 @@ class Bot(irc.IRCClient):
         """Set all quizzers' points to 0 and change topic."""
         for i in self.quizzers:
             self.quizzers[i] = 0
-        self.target_score = max(1, len(self.quizzers) / 2)
+        self.target_score = 1 + len(self.quizzers) / 2
         self.set_topic()
 
     def add_quizzer(self, quizzer):
