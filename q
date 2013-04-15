@@ -107,8 +107,11 @@ class Bot(irc.IRCClient):
         """Overrides PRIVMSG."""
         name = self.clean_nick(user)
         # Check for answers.
-        if not self.answered and str(self.answer).lower() in msg.lower():
-            self.award(name)
+        if not self.answered:
+            if self.quizzers[name] is None:
+                self.quizzers[name] = 0
+            if str(self.answer).lower() in msg.lower():
+                self.award(name)
         # Check if it's a command for the bot.
         if msg.startswith('!help'):
             try:
@@ -227,7 +230,7 @@ class Bot(irc.IRCClient):
         quizzersByPoints = sorted(self.quizzers.iteritems(), key=itemgetter(1),
                                   reverse=True)
         for numAnswerers, (quizzer, points) in enumerate(quizzersByPoints):
-            if points < 1:
+            if points is None:
                 break
         else:
             numAnswerers += 1
@@ -314,7 +317,7 @@ class Bot(irc.IRCClient):
     def reset(self):
         """Set all quizzers' points to 0 and change topic."""
         for i in self.quizzers:
-            self.quizzers[i] = 0
+            self.quizzers[i] = None
         self.target_score = 1 + len(self.quizzers) / 2
         self.set_topic()
 
