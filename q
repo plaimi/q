@@ -263,8 +263,9 @@ class Bot(irc.IRCClient):
         self.msg(user, self.factory.channel + ' is a quiz channel.')
         self.msg(user, 'I am ' + self.nickname + ', and *I* ask the' +
                  ' questions around here! :->')
-        self.msg(user, '!score prints the current top 5 quizzers.' +
-                 ' happy quizzing!')
+        self.msg(user, '!score prints the current top 5 quizzers.')
+        self.msg(user, '!hiscore prints the all time top 5 quizzers.')
+        self.msg(user, 'happy quizzing!')
         self.msg(user, '(o, and BTW, I\'m hungry, like *all* the freaking' +
                  ' time.')
         self.msg(user, 'you can feed me with !botsnack. please do. often.)')
